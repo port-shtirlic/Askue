@@ -1,0 +1,8 @@
+Application/bin/
+Application/obj/
+Application/Properties/
+Application/options.json
+packages/
+.vs/
+*.log
+*.user
