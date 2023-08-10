@@ -210,6 +210,28 @@ namespace Application
         }
 
         /// <summary>
+        /// Определить путь к файлу скриптов
+        /// </summary>
+        /// <param name="isMeasure">Режим: true обычные показания; false аналитика</param>
+        /// <param name="analyticType">тип аналитики</param>
+        /// <returns></returns>
+        private string GetScriptPath(bool isMeasure, int? analyticType)
+        {
+            if (isMeasure)
+                return $"Scripts/{_selectedOptions.MainScriptName}.sql";
+            switch (analyticType)
+            {
+                case 1: return $"Scripts/{_selectedOptions.Analytic1}.sql";
+                case 2: return $"Scripts/{_selectedOptions.Analytic2}.sql";
+                case 3: return $"Scripts/{_selectedOptions.Analytic3}.sql";
+                case 4: return $"Scripts/{_selectedOptions.Analytic4}.sql";
+                case 5: return $"Scripts/{_selectedOptions.Analytic5}.sql";
+                case 6: return $"Scripts/{_selectedOptions.Analytic6}.sql";
+                default: return null;
+            }
+        }
+
+        /// <summary>
         /// Загрузить данные
         /// </summary>
         /// <param name="sender"></param>
@@ -225,9 +247,15 @@ namespace Application
 
             SetDefaultData();
 
-            //Загрузка данных
-            string path = $"Scripts/{_selectedOptions.MainScriptName}.sql";
-            if (!File.Exists(path))
+            var isMeasure = measureType.EditValue as bool?;
+            var analyticTypeValue = analyticType.EditValue as int?;
+
+            if (!isMeasure.HasValue || !analyticTypeValue.HasValue)
+                return;
+
+            string path = GetScriptPath(isMeasure.Value, analyticTypeValue.Value);
+
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
                 this.labelConnectionStatus.EditValue = $"Отсутствует файл {path}";
                 return;
@@ -244,22 +272,47 @@ namespace Application
                 }
             }
 
-            gridView.ShowLoadingPanel();
-
             var dateBegin = ((DateTime)DateBegin.EditValue).ToString("yyyyMMdd");
             var dateEnd = ((DateTime)DateEnd.EditValue).ToString("yyyyMMdd");
-
-            var isHvs = ((bool)hasHvs.EditValue);
-            var isGvs = ((bool)hasGvs.EditValue);
-            var isTe = ((bool)hasTe.EditValue);
-            var isEe = ((bool)hasEe.EditValue);
-
             var selectedDeviceIdsInSqlForJoinMainScript = $"\r\n INNER JOIN (SELECT * FROM (VALUES ({string.Join("), (", selectedDeviceIds)}) ) AS vt(a) ) selectedDevices on D1.Id = selectedDevices.a";
-            sqlExpression = string.Format(sqlExpression, 
-                selectedDeviceIdsInSqlForJoinMainScript, 
-                $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @isHvs = {Convert.ToInt32(isHvs)} set @isGvs = {Convert.ToInt32(isGvs)} set @isTe = {Convert.ToInt32(isTe)} set @isEe = {Convert.ToInt32(isEe)}"
-            );
+            if (isMeasure.Value)
+            {
+                var isHvs = ((bool)hasHvs.EditValue);
+                var isGvs = ((bool)hasGvs.EditValue);
+                var isTe = ((bool)hasTe.EditValue);
+                var isEe = ((bool)hasEe.EditValue);
 
+                
+                sqlExpression = string.Format(sqlExpression,
+                    selectedDeviceIdsInSqlForJoinMainScript,
+                    $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @isHvs = {Convert.ToInt32(isHvs)} set @isGvs = {Convert.ToInt32(isGvs)} set @isTe = {Convert.ToInt32(isTe)} set @isEe = {Convert.ToInt32(isEe)}"
+                );
+            }
+            else
+            {
+                if (analyticTypeValue.Value == 1)
+                {
+                    var paramString = analyticParam1.EditValue as string;
+                    if (string.IsNullOrEmpty(paramString) || !Decimal.TryParse(paramString, out decimal paramValue))
+                    {
+                        this.labelConnectionStatus.EditValue = "Не заполнен параметр";
+                        return;
+                    }
+                    sqlExpression = string.Format(sqlExpression,
+                        selectedDeviceIdsInSqlForJoinMainScript,
+                        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @delta = {paramValue}"
+                    );
+                }
+                else if (analyticTypeValue.Value == 2)
+                {
+                    sqlExpression = string.Format(sqlExpression,
+                        selectedDeviceIdsInSqlForJoinMainScript,
+                        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}'"
+                    );
+                }
+            } 
+
+            gridView.ShowLoadingPanel();
             this.labelConnectionStatus.EditValue = "Загрузка...";
             var sw = Stopwatch.StartNew();
 
@@ -348,7 +401,6 @@ namespace Application
             gridView.HideLoadingPanel();
             this.labelConnectionStatus.EditValue = "";
 
-
             sw.Stop();
             this.labelConnectionStatus.EditValue = $"Время выполнения запроса {sw.Elapsed.Seconds + sw.Elapsed.Minutes * 60} c";
         }
@@ -420,8 +472,69 @@ namespace Application
         {
             _columnTitles = new List<string>();
             _data = new List<List<DataItemModel>>();
+            gridControl.DataSource = null;
+            gridView.Columns.Clear();
         }
 
         #endregion
+
+        private void measureType_EditValueChanged(object sender, EventArgs e)
+        {
+            var isMeasure = measureType.EditValue as bool?;
+            if (!isMeasure.HasValue)
+                return;
+            if (isMeasure.Value)
+            {
+                analyticType.Enabled = false;
+                analyticParams.Visible = false;
+
+                hasGvs.Enabled = true;
+                hasHvs.Enabled = true;
+                hasTe.Enabled = true;
+                hasEe.Enabled = true;
+
+                /*
+                А) потребление ХВС<ГВС более чем на ХХХ значение; (на сколько)
+                Б) отсутствие потребления ЭЭ при наличии потребления ХВС/ГВС и наоборот; -
+                В) отсутствие данных по объекту учета в течении определенного периода времени; (дни)
+                Г) отсутствие потребления ХВС, при наличии ГВС;-
+                Д) аномальный расход с возможностью выставления верхнего и нижнего уровня диапазона.
+                */
+            }
+            else
+            {
+                analyticType.Enabled = true;
+                analyticParams.Visible = true;
+
+                hasGvs.Enabled = false;
+                hasHvs.Enabled = false;
+                hasTe.Enabled = false;
+                hasEe.Enabled = false;
+            }
+        }
+
+        private void analyticType_EditValueChanged(object sender, EventArgs e)
+        {
+            var typeValue = analyticType.EditValue as int?;
+
+            if (!typeValue.HasValue)
+                return;
+
+            if (typeValue.Value == 1)
+            {
+                analyticParam1.Visibility = BarItemVisibility.Always;
+                analyticParam3.Visibility = BarItemVisibility.Never;
+            }
+            else if (typeValue.Value == 3)
+            {
+                analyticParam1.Visibility = BarItemVisibility.Never;
+                analyticParam3.Visibility = BarItemVisibility.Always;
+            } 
+            else
+            {
+                analyticParam1.Visibility = BarItemVisibility.Never;
+                analyticParam3.Visibility = BarItemVisibility.Never;
+            }
+        }
     }
 }

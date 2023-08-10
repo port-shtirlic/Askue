@@ -8,5 +8,17 @@
 
         public string MainScriptName { get; set; }
 
+        public string Analytic1 { get; set; }
+
+        public string Analytic2 { get; set; }
+
+        public string Analytic3 { get; set; }
+
+        public string Analytic4 { get; set; }
+
+        public string Analytic5 { get; set; }
+
+        public string Analytic6 { get; set; }
+
     }
 }

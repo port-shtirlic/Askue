@@ -137,6 +137,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\energy_analytic_2.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\energy_analytic_1.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\energy_tree.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
