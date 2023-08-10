@@ -5,20 +5,20 @@
 
 --SET ARITHABORT ON;
 
-IF OBJECT_ID('tempdb.dbo.#result2', 'U') IS NOT NULL
-  DROP TABLE #result2; 
-IF OBJECT_ID('tempdb.dbo.#measures2', 'U') IS NOT NULL
-  DROP TABLE #measures2; 
-IF OBJECT_ID('tempdb.dbo.#address2', 'U') IS NOT NULL
-  DROP TABLE #address2; 
-IF OBJECT_ID('tempdb.dbo.#measureIds2', 'U') IS NOT NULL
-  DROP TABLE #measureIds2; 
-IF OBJECT_ID('tempdb.dbo.#measureParams2', 'U') IS NOT NULL
-  DROP TABLE #measureParams2; 
-IF OBJECT_ID('tempdb.dbo.#measuresBegin2', 'U') IS NOT NULL
-  DROP TABLE #measuresBegin2; 
-IF OBJECT_ID('tempdb.dbo.#measuresEnd2', 'U') IS NOT NULL
-  DROP TABLE #measuresEnd2; 
+IF OBJECT_ID('tempdb.dbo.#result', 'U') IS NOT NULL
+  DROP TABLE #result; 
+IF OBJECT_ID('tempdb.dbo.#measures', 'U') IS NOT NULL
+  DROP TABLE #measures; 
+IF OBJECT_ID('tempdb.dbo.#address', 'U') IS NOT NULL
+  DROP TABLE #address; 
+IF OBJECT_ID('tempdb.dbo.#measureIds', 'U') IS NOT NULL
+  DROP TABLE #measureIds; 
+IF OBJECT_ID('tempdb.dbo.#measureParams', 'U') IS NOT NULL
+  DROP TABLE #measureParams; 
+IF OBJECT_ID('tempdb.dbo.#measuresBegin', 'U') IS NOT NULL
+  DROP TABLE #measuresBegin; 
+IF OBJECT_ID('tempdb.dbo.#measuresEnd', 'U') IS NOT NULL
+  DROP TABLE #measuresEnd; 
 
 
 DECLARE @t1 DATETIME;
@@ -38,20 +38,20 @@ set @beginDate = DATEADD(Day, 1, @beginDate)
 set @endDate = DATEADD(Day, 1, @endDate)
 
 --связка связка MeasureID и Devices
-CREATE TABLE #measureParams2 (DeviceId int , MasterID int, DeviceNumber nvarchar(50), TypeSSN varchar(10), Comment nvarchar(512), resName nvarchar(255), MeasureId int, mpsName varchar(16), ParamID int,
+CREATE TABLE #measureParams (DeviceId int , MasterID int, DeviceNumber nvarchar(50), TypeSSN varchar(10), Comment nvarchar(512), resName nvarchar(255), MeasureId int, mpsName varchar(16), ParamID int,
 isHvs bit, isGvs bit, isEe bit, hasGvs bit, hasHvs bit, hasTe bit, hasEe bit, address nvarchar(255), location nvarchar(255))
 
 --уникальные адреса из приборов
-CREATE TABLE #address2(address nvarchar(255), location nvarchar(255), deviceCount int)
+CREATE TABLE #address(address nvarchar(255), location nvarchar(255), deviceCount int)
 
 --отфильтрованные MeasureID
-CREATE TABLE  #measureIds2 (MeasureID int, ParamID int, Kind tinyint, Range tinyint, Tarif tinyint)
+CREATE TABLE  #measureIds (MeasureID int, ParamID int, Kind tinyint, Range tinyint, Tarif tinyint)
 --показания из каждой таблцы по прибору
-CREATE TABLE  #measures2 (MeasureId int, ParamID int, Kind tinyint, Range tinyint, Tarif tinyint, Time datetime INDEX IX_measures_Time NONCLUSTERED, ValOut float)
+CREATE TABLE  #measures (MeasureId int, ParamID int, Kind tinyint, Range tinyint, Tarif tinyint, Time datetime INDEX IX_measures_Time NONCLUSTERED, ValOut float)
 
 --последие показания на дату начала и конца
-CREATE TABLE  #measuresBegin2 (DeviceId int, MeasureId int, ParamID int, Time datetime, ValOut float)
-CREATE TABLE  #measuresEnd2 (DeviceId int, MeasureId int, ParamID int, Time datetime, ValOut float)
+CREATE TABLE  #measuresBegin (DeviceId int, MeasureId int, ParamID int, Time datetime, ValOut float)
+CREATE TABLE  #measuresEnd (DeviceId int, MeasureId int, ParamID int, Time datetime, ValOut float)
 
 
 
@@ -82,7 +82,7 @@ mydevices AS (
 	--INNER JOIN (SELECT * FROM (VALUES (42220) ) AS vt(a) ) selectedDevices on D1.Id = selectedDevices.a
 	INNER JOIN dbo.DevicesParams AS res1 ON D1.ID = res1.DeviceID AND res1.Name = 'ResourceType'
 )
-insert #measureParams2 (DeviceId, MasterID, DeviceNumber, TypeSSN, Comment, resName, MeasureId, mpsName, ParamID, isHvs, isGvs, isEe, hasGvs, hasHvs, hasTe, hasEe, address, location)
+insert #measureParams (DeviceId, MasterID, DeviceNumber, TypeSSN, Comment, resName, MeasureId, mpsName, ParamID, isHvs, isGvs, isEe, hasGvs, hasHvs, hasTe, hasEe, address, location)
 select *
 from
 (
@@ -130,322 +130,322 @@ WHERE
 	or z.isEe = 1
 
 
-insert #address2 (address, location, deviceCount)
+insert #address (address, location, deviceCount)
 select distinct 
 	address, 
 	location, 
 	case when mpsName in ('V3', 'V4') then 2 else 1 end
-from #measureParams2
+from #measureParams
 
 
 
 SET @t2 = GETDATE();
 insert @timers (stepName, diff_ml)
-SELECT 'insert #measureParams2', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+SELECT 'insert #measureParams', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
 SET @t1 = GETDATE();
 
+--{GENERAL}
+
+--insert #measureIds (MeasureID, ParamID, Kind, Range, Tarif)
+--SELECT 
+--	mid.Id as MeasureID,
+--	mid.ParamID,
+--	mid.Kind,
+--	mid.Range,
+--	mid.Tarif
+--FROM MeasureID mid WITH(NOLOCK)
+--INNER JOIN #measureParams mp on mp.ParamID = mid.ParamID
+--WHERE mid.Tarif = 0 and mid.Kind in (0, 2)
+
+--SET @t2 = GETDATE();
+--insert @timers (stepName, diff_ml)
+--SELECT 'insert #measureIds', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--SET @t1 = GETDATE();
 
 
-insert #measureIds2 (MeasureID, ParamID, Kind, Range, Tarif)
-SELECT 
-	mid.Id as MeasureID,
-	mid.ParamID,
-	mid.Kind,
-	mid.Range,
-	mid.Tarif
-FROM MeasureID mid WITH(NOLOCK)
-INNER JOIN #measureParams2 mp on mp.ParamID = mid.ParamID
-WHERE mid.Tarif = 0 and mid.Kind in (0, 2)
 
-SET @t2 = GETDATE();
-insert @timers (stepName, diff_ml)
-SELECT 'insert #measureIds2', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-SET @t1 = GETDATE();
+--	--MeasuresCurrent end (на begin нет смысла)
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID as MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Time,
+--		md.ValOut
+--	FROM MeasuresCurrent md  WITH(NOLOCK)
+--	INNER JOIN #measureIds mid on mid.MeasureID = md.MeasureID
+--	where (md.Time > DateADD(Day, -2, @endDate) and md.Time < @endDate) and mid.Kind = 0
 
-
-
-	--MeasuresCurrent end (на begin нет смысла)
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID as MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Time,
-		md.ValOut
-	FROM MeasuresCurrent md  WITH(NOLOCK)
-	INNER JOIN #measureIds2 mid on mid.MeasureID = md.MeasureID
-	where (md.Time > DateADD(Day, -2, @endDate) and md.Time < @endDate) and mid.Kind = 0
-
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresCurrent ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresCurrent ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 	
-	--MeasuresLog end
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		ml.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		ml.Time,
-		ml.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresLog x WITH(NOLOCK) where mid.MeasureID=x.MeasureID AND x.Time < @endDate and x.Time > DATEADD(WEEK, -2, @endDate) order by Time desc) ml
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
-	WHERE
-		m.ParamID is null
-		and mid.Kind = 0
+--	--MeasuresLog end
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		ml.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		ml.Time,
+--		ml.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresLog x WITH(NOLOCK) where mid.MeasureID=x.MeasureID AND x.Time < @endDate and x.Time > DATEADD(WEEK, -2, @endDate) order by Time desc) ml
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
+--	WHERE
+--		m.ParamID is null
+--		and mid.Kind = 0
 	
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresLog end ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresLog end ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 
-	--MeasuresLog begin
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		ml.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		ml.Time,
-		ml.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresLog x WITH(NOLOCK) where mid.MeasureID=x.MeasureID AND x.Time < @beginDate and x.Time > DATEADD(WEEK, -2, @beginDate) order by Time desc) ml
-	WHERE mid.Kind = 0
+--	--MeasuresLog begin
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		ml.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		ml.Time,
+--		ml.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresLog x WITH(NOLOCK) where mid.MeasureID=x.MeasureID AND x.Time < @beginDate and x.Time > DATEADD(WEEK, -2, @beginDate) order by Time desc) ml
+--	WHERE mid.Kind = 0
 
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresLog begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresLog begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 
-	--MeasuresCut begin
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Time,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresCut x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Time > DATEADD(MONTH, -1, @beginDate) AND x.Time < @beginDate order by Time desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @beginDate) and m.Time < @beginDate
-	where m.ParamID is null
-		and mid.Kind = 0
+--	--MeasuresCut begin
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Time,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresCut x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Time > DATEADD(MONTH, -1, @beginDate) AND x.Time < @beginDate order by Time desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @beginDate) and m.Time < @beginDate
+--	where m.ParamID is null
+--		and mid.Kind = 0
 	
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresCut begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresCut begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 
-	--MeasuresCut end
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Time,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresCut x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Time > DATEADD(MONTH, -1, @endDate) AND x.Time < @endDate order by Time desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
-	where m.ParamID is null
-		and mid.Kind = 0
+--	--MeasuresCut end
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Time,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresCut x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Time > DATEADD(MONTH, -1, @endDate) AND x.Time < @endDate order by Time desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
+--	where m.ParamID is null
+--		and mid.Kind = 0
 
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresCut end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresCut end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 
-	--MeasuresDay begin
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Timemark,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresDay x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(WEEK, -2, @beginDate) and x.Timemark < @beginDate order by Timemark desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @beginDate) and m.Time < @beginDate
-	where m.ParamID is null
-		and mid.Kind = 2
+--	--MeasuresDay begin
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Timemark,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresDay x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(WEEK, -2, @beginDate) and x.Timemark < @beginDate order by Timemark desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @beginDate) and m.Time < @beginDate
+--	where m.ParamID is null
+--		and mid.Kind = 2
 
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresDay begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresDay begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
 	
-	--MeasuresDay end
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Timemark,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresDay x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(WEEK, -2, @endDate) and x.Timemark < @endDate order by Timemark desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
-	where m.ParamID is null
-		and mid.Kind = 2
+--	--MeasuresDay end
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Timemark,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresDay x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(WEEK, -2, @endDate) and x.Timemark < @endDate order by Timemark desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
+--	where m.ParamID is null
+--		and mid.Kind = 2
 
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresDay end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
-
-
-	--MeasuresLong end
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Timemark,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresLong x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(MONTH, -2, @endDate) and x.Timemark < @endDate order by Timemark desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
-	where m.ParamID is null
-		and mid.Kind = 2
-
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresLong ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresDay end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
-	--MeasuresHour begin
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Timemark,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresHour x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(HOUR, -4, @beginDate) and x.Timemark < @beginDate order by Timemark desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -2, @beginDate) and m.Time < @beginDate
-	where m.ParamID is null
-		and mid.Kind = 2
+--	--MeasuresLong end
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Timemark,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresLong x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(MONTH, -2, @endDate) and x.Timemark < @endDate order by Timemark desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -1, @endDate) and m.Time < @endDate
+--	where m.ParamID is null
+--		and mid.Kind = 2
 
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresHour begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
-
-
-	--MeasuresHour end
-	insert #measures2 (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
-	SELECT 
-		mid.MeasureID,
-		mid.ParamID,
-		mid.Kind,
-		mid.Range,
-		mid.Tarif,
-		[Time]=md.Timemark,
-		md.ValOut
-	FROM #measureIds2 mid
-	CROSS APPLY (select top 1 * from MeasuresHour x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(HOUR, -4, @endDate) and x.Timemark < @endDate order by Timemark desc) md
-	LEFT JOIN #measures2 m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -2, @endDate) and m.Time < @endDate
-	where m.ParamID is null
-		and mid.Kind = 2
-
-	SET @t2 = GETDATE();
-	insert @timers (stepName, diff_ml)
-	SELECT 'insert #measuresHour end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-	SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresLong ', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
-insert #measuresBegin2 (DeviceId, MeasureID, ParamID, Time, ValOut)
-select 
-	DeviceId,
-	MeasureId,
-	ParamID,
-	Time,
-	ValOut
-from
-(
-	select 
-		m.DeviceId,
-		m.MeasureId,
-		z.ParamID,
-		z.Time,
-		ROUND(case when m.TypeSSN = 'MCAL.COMBI' then z.ValOut * 0.000859845 else z.ValOut end, 3) as ValOut
-		,ROW_NUMBER() OVER (Partition by m.DeviceId, m.ParamID order by z.Time desc) as row
-	from #measureParams2 m 
-	INNER JOIN #measures2 z on m.ParamID = z.ParamID
-	where z.Time < @beginDate
-) y
-where y.row = 1
+--	--MeasuresHour begin
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Timemark,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresHour x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(HOUR, -4, @beginDate) and x.Timemark < @beginDate order by Timemark desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -2, @beginDate) and m.Time < @beginDate
+--	where m.ParamID is null
+--		and mid.Kind = 2
 
-SET @t2 = GETDATE();
-insert @timers (stepName, diff_ml)
-SELECT 'insert #measuresBegin2', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresHour begin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
 
 
-insert #measuresEnd2 (DeviceId, MeasureID, ParamID, Time, ValOut)
-select 
-	DeviceId,
-	MeasureId,
-	ParamID,
-	Time,
-	ValOut
-from
-(
-	select 
-		m.DeviceId,
-		m.MeasureId,
-		z.ParamID,
-		z.Time,
-		ROUND(case when m.TypeSSN = 'MCAL.COMBI' then z.ValOut * 0.000859845 else z.ValOut end, 3) as ValOut
-		,ROW_NUMBER() OVER (Partition by m.DeviceId, m.ParamID order by z.Time desc) as row
-	from #measureParams2 m
-	INNER JOIN #measures2 z on m.ParamID = z.ParamID
-	where z.Time > DateADD(MONTH, -1, @endDate) and z.Time < @endDate
-) y
-where y.row = 1
+--	--MeasuresHour end
+--	insert #measures (MeasureID, ParamID, Kind, Range, Tarif, Time, ValOut)
+--	SELECT 
+--		mid.MeasureID,
+--		mid.ParamID,
+--		mid.Kind,
+--		mid.Range,
+--		mid.Tarif,
+--		[Time]=md.Timemark,
+--		md.ValOut
+--	FROM #measureIds mid
+--	CROSS APPLY (select top 1 * from MeasuresHour x WITH(NOLOCK) where mid.MeasureID=x.MeasureID and x.Timemark > DateADD(HOUR, -4, @endDate) and x.Timemark < @endDate order by Timemark desc) md
+--	LEFT JOIN #measures m on m.ParamID = mid.ParamID and m.Time >= DateADD(day, -2, @endDate) and m.Time < @endDate
+--	where m.ParamID is null
+--		and mid.Kind = 2
 
-SET @t2 = GETDATE();
-insert @timers (stepName, diff_ml)
-SELECT 'insert #measuresEnd2', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
-SET @t1 = GETDATE();
+--	SET @t2 = GETDATE();
+--	insert @timers (stepName, diff_ml)
+--	SELECT 'insert #measuresHour end', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--	SET @t1 = GETDATE();
+
+
+--insert #measuresBegin (DeviceId, MeasureID, ParamID, Time, ValOut)
+--select 
+--	DeviceId,
+--	MeasureId,
+--	ParamID,
+--	Time,
+--	ValOut
+--from
+--(
+--	select 
+--		m.DeviceId,
+--		m.MeasureId,
+--		z.ParamID,
+--		z.Time,
+--		ROUND(case when m.TypeSSN = 'MCAL.COMBI' then z.ValOut * 0.000859845 else z.ValOut end, 3) as ValOut
+--		,ROW_NUMBER() OVER (Partition by m.DeviceId, m.ParamID order by z.Time desc) as row
+--	from #measureParams m 
+--	INNER JOIN #measures z on m.ParamID = z.ParamID
+--	where z.Time < @beginDate
+--) y
+--where y.row = 1
+
+--SET @t2 = GETDATE();
+--insert @timers (stepName, diff_ml)
+--SELECT 'insert #measuresBegin', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--SET @t1 = GETDATE();
+
+
+--insert #measuresEnd (DeviceId, MeasureID, ParamID, Time, ValOut)
+--select 
+--	DeviceId,
+--	MeasureId,
+--	ParamID,
+--	Time,
+--	ValOut
+--from
+--(
+--	select 
+--		m.DeviceId,
+--		m.MeasureId,
+--		z.ParamID,
+--		z.Time,
+--		ROUND(case when m.TypeSSN = 'MCAL.COMBI' then z.ValOut * 0.000859845 else z.ValOut end, 3) as ValOut
+--		,ROW_NUMBER() OVER (Partition by m.DeviceId, m.ParamID order by z.Time desc) as row
+--	from #measureParams m
+--	INNER JOIN #measures z on m.ParamID = z.ParamID
+--	where z.Time > DateADD(MONTH, -1, @endDate) and z.Time < @endDate
+--) y
+--where y.row = 1
+
+--SET @t2 = GETDATE();
+--insert @timers (stepName, diff_ml)
+--SELECT 'insert #measuresEnd', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
+--SET @t1 = GETDATE();
 
 
 
 select *
-into #result2
+into #result
 from
 	(
 	select 
@@ -471,35 +471,35 @@ from
 		, cast(mEndEe.ValOut - mStartEe.ValOut as decimal(18, 2)) as [Потребление ЭЭ]
 
 		
-	from #address2 a 
-	left join #measureParams2 deviceHvs on 
+	from #address a 
+	left join #measureParams deviceHvs on 
 		a.address = deviceHvs.address and 
 		a.location = deviceHvs.location and 
-		((a.deviceCount = 1 and (deviceHvs.mpsName = 'V1' OR deviceHvs.mpsName = 'R')) or (a.deviceCount = 2 and deviceHvs.mpsName = 'V3')) and 
+		((a.deviceCount = 1 and (deviceHvs.mpsName = 'V1' OR deviceHvs.mpsName = 'R' OR deviceHvs.mpsName = 'V')) or (a.deviceCount = 2 and deviceHvs.mpsName = 'V3')) and 
 		deviceHvs.isHvs = 1
-	left join #measureParams2 deviceGvs on 
+	left join #measureParams deviceGvs on 
 		a.address = deviceGvs.address and 
 		a.location = deviceGvs.location and 
-		((a.deviceCount = 1 and (deviceGvs.mpsName = 'V2' OR deviceHvs.mpsName = 'R')) or (a.deviceCount = 2 and deviceGvs.mpsName = 'V4')) and 
+		((a.deviceCount = 1 and (deviceGvs.mpsName = 'V2' OR deviceHvs.mpsName = 'R' OR deviceHvs.mpsName = 'V')) or (a.deviceCount = 2 and deviceGvs.mpsName = 'V4')) and 
 		deviceGvs.isGvs = 1
-	left join #measureParams2 deviceEe on 
+	left join #measureParams deviceEe on 
 		a.address = deviceEe.address and 
 		a.location = deviceEe.location and 
 		a.deviceCount = 1 and 
 		deviceEe.isEe = 1
 
-	LEFT OUTER JOIN #measuresBegin2 mStartHvs on deviceHvs.DeviceId = mStartHvs.DeviceId and deviceHvs.ParamID = mStartHvs.ParamID 
-	LEFT OUTER JOIN #measuresEnd2 mEndHvs on deviceHvs.DeviceId = mEndHvs.DeviceId and deviceHvs.ParamID = mEndHvs.ParamID
+	LEFT OUTER JOIN #measuresBegin mStartHvs on deviceHvs.DeviceId = mStartHvs.DeviceId and deviceHvs.ParamID = mStartHvs.ParamID 
+	LEFT OUTER JOIN #measuresEnd mEndHvs on deviceHvs.DeviceId = mEndHvs.DeviceId and deviceHvs.ParamID = mEndHvs.ParamID
 
-	LEFT OUTER JOIN #measuresBegin2 mStartGvs on deviceGvs.DeviceId = mStartGvs.DeviceId and deviceGvs.ParamID = mStartGvs.ParamID 
-	LEFT OUTER JOIN #measuresEnd2 mEndGvs on deviceGvs.DeviceId = mEndGvs.DeviceId and deviceGvs.ParamID = mEndGvs.ParamID
+	LEFT OUTER JOIN #measuresBegin mStartGvs on deviceGvs.DeviceId = mStartGvs.DeviceId and deviceGvs.ParamID = mStartGvs.ParamID 
+	LEFT OUTER JOIN #measuresEnd mEndGvs on deviceGvs.DeviceId = mEndGvs.DeviceId and deviceGvs.ParamID = mEndGvs.ParamID
 
-	LEFT OUTER JOIN #measuresBegin2 mStartEe on deviceEe.DeviceId = mStartEe.DeviceId and deviceEe.ParamID = mStartEe.ParamID 
-	LEFT OUTER JOIN #measuresEnd2 mEndEe on deviceEe.DeviceId = mEndEe.DeviceId and deviceEe.ParamID = mEndEe.ParamID
+	LEFT OUTER JOIN #measuresBegin mStartEe on deviceEe.DeviceId = mStartEe.DeviceId and deviceEe.ParamID = mStartEe.ParamID 
+	LEFT OUTER JOIN #measuresEnd mEndEe on deviceEe.DeviceId = mEndEe.DeviceId and deviceEe.ParamID = mEndEe.ParamID
 )z
 where 
 	(isnull([Потребление ЭЭ], 0) = 0 and ([Потребление ХВС] > 0 or [Потребление ГВС] > 0)) or
-	([Потребление ЭЭ] > 0 and (isnull([Потребление ХВС], 0) = 0 or isnull([Потребление ГВС], 0) = 0))
+	([Потребление ЭЭ] > 0 and (isnull([Потребление ХВС], 0) = 0 or isnull([Потребление ГВС], 0) = 0)) --TODO уточнить
 
 
 
@@ -508,18 +508,18 @@ insert @timers (stepName, diff_ml)
 SELECT 'end select', DATEDIFF(millisecond,@t1,@t2) AS elapsed_ms;
 
 
-select * from #result2 r order by r.address, r.location
+select * from #result r order by r.address, r.location
 
 --select * from @timers
 
 
 
-drop table #measures2
-drop table #measureIds2
-drop table #measureParams2
-drop table #measuresBegin2
-drop table #measuresEnd2
-drop table #result2
+drop table #measures
+drop table #measureIds
+drop table #measureParams
+drop table #measuresBegin
+drop table #measuresEnd
+drop table #result
 
 --set statistics time off
 --set statistics io off

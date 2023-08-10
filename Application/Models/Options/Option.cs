@@ -8,6 +8,10 @@
 
         public string MainScriptName { get; set; }
 
+        public string Tree { get; set; }
+
+        public string GeneralScript { get; set; }
+
         public string Analytic1 { get; set; }
 
         public string Analytic2 { get; set; }

@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
-            this.comboBoxServerSelect = new DevExpress.XtraBars.BarEditItem();
+            this.ComboBoxServerSelect = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemComboBox1 = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
             this.BtnLoad = new DevExpress.XtraBars.BarButtonItem();
-            this.btnExportExcel = new DevExpress.XtraBars.BarButtonItem();
+            this.BtnExportExcel = new DevExpress.XtraBars.BarButtonItem();
             this.DateEnd = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemDateEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemDateEdit();
             this.DateBegin = new DevExpress.XtraBars.BarEditItem();
@@ -48,13 +48,13 @@
             this.repositoryItemCheckEdit4 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
             this.labelConnectionStatus = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemMemoEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemMemoEdit();
-            this.measureType = new DevExpress.XtraBars.BarEditItem();
+            this.MeasureType = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemRadioGroup1 = new DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup();
-            this.analyticType = new DevExpress.XtraBars.BarEditItem();
+            this.AnalyticType = new DevExpress.XtraBars.BarEditItem();
             this.analyticRadioGroup = new DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup();
-            this.analyticParam1 = new DevExpress.XtraBars.BarEditItem();
+            this.AnalyticParam1 = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
-            this.analyticParam3 = new DevExpress.XtraBars.BarEditItem();
+            this.AnalyticParam3 = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemTextEdit2 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroupMain = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
@@ -109,9 +109,9 @@
             this.ribbonControl1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
             this.ribbonControl1.ExpandCollapseItem,
             this.ribbonControl1.SearchEditItem,
-            this.comboBoxServerSelect,
+            this.ComboBoxServerSelect,
             this.BtnLoad,
-            this.btnExportExcel,
+            this.BtnExportExcel,
             this.DateEnd,
             this.DateBegin,
             this.hasTe,
@@ -119,10 +119,10 @@
             this.hasGvs,
             this.hasHvs,
             this.labelConnectionStatus,
-            this.measureType,
-            this.analyticType,
-            this.analyticParam1,
-            this.analyticParam3});
+            this.MeasureType,
+            this.AnalyticType,
+            this.AnalyticParam1,
+            this.AnalyticParam3});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl1.MaxItemId = 41;
             this.ribbonControl1.Name = "ribbonControl1";
@@ -151,15 +151,15 @@
             this.ribbonControl1.Size = new System.Drawing.Size(1708, 158);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
             // 
-            // comboBoxServerSelect
+            // ComboBoxServerSelect
             // 
-            this.comboBoxServerSelect.AllowRightClickInMenu = false;
-            this.comboBoxServerSelect.Caption = "Сервер ";
-            this.comboBoxServerSelect.Edit = this.repositoryItemComboBox1;
-            this.comboBoxServerSelect.EditWidth = 100;
-            this.comboBoxServerSelect.Id = 1;
-            this.comboBoxServerSelect.Name = "comboBoxServerSelect";
-            this.comboBoxServerSelect.EditValueChanged += new System.EventHandler(this.comboBoxServerSelect_EditValueChanged);
+            this.ComboBoxServerSelect.AllowRightClickInMenu = false;
+            this.ComboBoxServerSelect.Caption = "Сервер ";
+            this.ComboBoxServerSelect.Edit = this.repositoryItemComboBox1;
+            this.ComboBoxServerSelect.EditWidth = 100;
+            this.ComboBoxServerSelect.Id = 1;
+            this.ComboBoxServerSelect.Name = "ComboBoxServerSelect";
+            this.ComboBoxServerSelect.EditValueChanged += new System.EventHandler(this.ComboBoxServerSelect_EditValueChanged);
             // 
             // repositoryItemComboBox1
             // 
@@ -179,16 +179,16 @@
             this.BtnLoad.Name = "BtnLoad";
             this.BtnLoad.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.BtnLoad_ItemClick);
             // 
-            // btnExportExcel
+            // BtnExportExcel
             // 
-            this.btnExportExcel.AllowRightClickInMenu = false;
-            this.btnExportExcel.Caption = "Выгрузить в эксель";
-            this.btnExportExcel.Enabled = false;
-            this.btnExportExcel.Id = 10;
-            this.btnExportExcel.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("btnExportExcel.ImageOptions.Image")));
-            this.btnExportExcel.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("btnExportExcel.ImageOptions.LargeImage")));
-            this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnExportExcel_ItemClick);
+            this.BtnExportExcel.AllowRightClickInMenu = false;
+            this.BtnExportExcel.Caption = "Выгрузить в эксель";
+            this.BtnExportExcel.Enabled = false;
+            this.BtnExportExcel.Id = 10;
+            this.BtnExportExcel.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("BtnExportExcel.ImageOptions.Image")));
+            this.BtnExportExcel.ImageOptions.LargeImage = ((System.Drawing.Image)(resources.GetObject("BtnExportExcel.ImageOptions.LargeImage")));
+            this.BtnExportExcel.Name = "BtnExportExcel";
+            this.BtnExportExcel.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.BtnExportExcel_ItemClick);
             // 
             // DateEnd
             // 
@@ -299,15 +299,15 @@
             this.repositoryItemMemoEdit1.Name = "repositoryItemMemoEdit1";
             this.repositoryItemMemoEdit1.ReadOnly = true;
             // 
-            // measureType
+            // MeasureType
             // 
-            this.measureType.Edit = this.repositoryItemRadioGroup1;
-            this.measureType.EditHeight = 50;
-            this.measureType.EditValue = true;
-            this.measureType.EditWidth = 100;
-            this.measureType.Id = 35;
-            this.measureType.Name = "measureType";
-            this.measureType.EditValueChanged += new System.EventHandler(this.measureType_EditValueChanged);
+            this.MeasureType.Edit = this.repositoryItemRadioGroup1;
+            this.MeasureType.EditHeight = 50;
+            this.MeasureType.EditValue = true;
+            this.MeasureType.EditWidth = 100;
+            this.MeasureType.Id = 35;
+            this.MeasureType.Name = "MeasureType";
+            this.MeasureType.EditValueChanged += new System.EventHandler(this.MeasureType_EditValueChanged);
             // 
             // repositoryItemRadioGroup1
             // 
@@ -317,16 +317,16 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(false, "Аналитика", true, null, "")});
             this.repositoryItemRadioGroup1.Name = "repositoryItemRadioGroup1";
             // 
-            // analyticType
+            // AnalyticType
             // 
-            this.analyticType.Edit = this.analyticRadioGroup;
-            this.analyticType.EditHeight = 100;
-            this.analyticType.EditValue = 1;
-            this.analyticType.EditWidth = 400;
-            this.analyticType.Enabled = false;
-            this.analyticType.Id = 36;
-            this.analyticType.Name = "analyticType";
-            this.analyticType.EditValueChanged += new System.EventHandler(this.analyticType_EditValueChanged);
+            this.AnalyticType.Edit = this.analyticRadioGroup;
+            this.AnalyticType.EditHeight = 100;
+            this.AnalyticType.EditValue = 1;
+            this.AnalyticType.EditWidth = 400;
+            this.AnalyticType.Enabled = false;
+            this.AnalyticType.Id = 36;
+            this.AnalyticType.Name = "AnalyticType";
+            this.AnalyticType.EditValueChanged += new System.EventHandler(this.AnalyticType_EditValueChanged);
             // 
             // analyticRadioGroup
             // 
@@ -338,12 +338,12 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem(5, "аномальный расход")});
             this.analyticRadioGroup.Name = "analyticRadioGroup";
             // 
-            // analyticParam1
+            // AnalyticParam1
             // 
-            this.analyticParam1.Caption = "на сколько больше";
-            this.analyticParam1.Edit = this.repositoryItemTextEdit1;
-            this.analyticParam1.Id = 39;
-            this.analyticParam1.Name = "analyticParam1";
+            this.AnalyticParam1.Caption = "на сколько больше";
+            this.AnalyticParam1.Edit = this.repositoryItemTextEdit1;
+            this.AnalyticParam1.Id = 39;
+            this.AnalyticParam1.Name = "AnalyticParam1";
             // 
             // repositoryItemTextEdit1
             // 
@@ -352,13 +352,13 @@
             this.repositoryItemTextEdit1.EditFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
             this.repositoryItemTextEdit1.Name = "repositoryItemTextEdit1";
             // 
-            // analyticParam3
+            // AnalyticParam3
             // 
-            this.analyticParam3.Caption = "сколько дней отсутствует";
-            this.analyticParam3.Edit = this.repositoryItemTextEdit2;
-            this.analyticParam3.Id = 40;
-            this.analyticParam3.Name = "analyticParam3";
-            this.analyticParam3.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+            this.AnalyticParam3.Caption = "сколько дней отсутствует";
+            this.AnalyticParam3.Edit = this.repositoryItemTextEdit2;
+            this.AnalyticParam3.Id = 40;
+            this.AnalyticParam3.Name = "AnalyticParam3";
+            this.AnalyticParam3.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
             // 
             // repositoryItemTextEdit2
             // 
@@ -382,7 +382,7 @@
             // 
             // ribbonPageGroupMain
             // 
-            this.ribbonPageGroupMain.ItemLinks.Add(this.comboBoxServerSelect);
+            this.ribbonPageGroupMain.ItemLinks.Add(this.ComboBoxServerSelect);
             this.ribbonPageGroupMain.ItemLinks.Add(this.labelConnectionStatus);
             this.ribbonPageGroupMain.Name = "ribbonPageGroupMain";
             // 
@@ -393,7 +393,7 @@
             // 
             // ribbonPageGroupBtnExcel
             // 
-            this.ribbonPageGroupBtnExcel.ItemLinks.Add(this.btnExportExcel);
+            this.ribbonPageGroupBtnExcel.ItemLinks.Add(this.BtnExportExcel);
             this.ribbonPageGroupBtnExcel.Name = "ribbonPageGroupBtnExcel";
             // 
             // ribbonPageGroupDatesPeriod
@@ -416,19 +416,19 @@
             // 
             // ribbonPageGroup1
             // 
-            this.ribbonPageGroup1.ItemLinks.Add(this.measureType);
+            this.ribbonPageGroup1.ItemLinks.Add(this.MeasureType);
             this.ribbonPageGroup1.Name = "ribbonPageGroup1";
             // 
             // ribbonPageGroup2
             // 
-            this.ribbonPageGroup2.ItemLinks.Add(this.analyticType);
+            this.ribbonPageGroup2.ItemLinks.Add(this.AnalyticType);
             this.ribbonPageGroup2.Name = "ribbonPageGroup2";
             this.ribbonPageGroup2.Text = "Тип аналитики";
             // 
             // analyticParams
             // 
-            this.analyticParams.ItemLinks.Add(this.analyticParam1);
-            this.analyticParams.ItemLinks.Add(this.analyticParam3);
+            this.analyticParams.ItemLinks.Add(this.AnalyticParam1);
+            this.analyticParams.ItemLinks.Add(this.AnalyticParam3);
             this.analyticParams.Name = "analyticParams";
             this.analyticParams.Text = "Параметры";
             this.analyticParams.Visible = false;
@@ -458,7 +458,7 @@
             this.measureUnitTree.OptionsView.CheckBoxStyle = DevExpress.XtraTreeList.DefaultNodeCheckBoxStyle.Check;
             this.measureUnitTree.Size = new System.Drawing.Size(348, 690);
             this.measureUnitTree.TabIndex = 1;
-            this.measureUnitTree.BeforeCheckNode += new DevExpress.XtraTreeList.CheckNodeEventHandler(this.measureUnitTree_BeforeCheckNode);
+            this.measureUnitTree.BeforeCheckNode += new DevExpress.XtraTreeList.CheckNodeEventHandler(this.MeasureUnitTree_BeforeCheckNode);
             // 
             // treeListColumn1
             // 
@@ -566,10 +566,10 @@
         private DevExpress.XtraTreeList.TreeList measureUnitTree;
         private DevExpress.XtraGrid.GridControl gridControl;
         private DevExpress.XtraGrid.Views.Grid.GridView gridView;
-        private DevExpress.XtraBars.BarEditItem comboBoxServerSelect;
+        private DevExpress.XtraBars.BarEditItem ComboBoxServerSelect;
         private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox1;
         private DevExpress.XtraBars.BarButtonItem BtnLoad;
-        private DevExpress.XtraBars.BarButtonItem btnExportExcel;
+        private DevExpress.XtraBars.BarButtonItem BtnExportExcel;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupBtnLoad;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupBtnExcel;
         private DevExpress.XtraTreeList.Columns.TreeListColumn treeListColumn1;
@@ -595,19 +595,19 @@
         private DevExpress.XtraEditors.Repository.RepositoryItemMemoEdit repositoryItemMemoEdit1;
         private DevExpress.XtraBars.Ribbon.RibbonPageCategory ribbonPageCategory1;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage2;
-        private DevExpress.XtraBars.BarEditItem measureType;
+        private DevExpress.XtraBars.BarEditItem MeasureType;
         private DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup repositoryItemRadioGroup1;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
-        private DevExpress.XtraBars.BarEditItem analyticType;
+        private DevExpress.XtraBars.BarEditItem AnalyticType;
         private DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup analyticRadioGroup;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup analyticParams;
         private DevExpress.XtraEditors.Repository.RepositoryItemTimeEdit repositoryItemTimeEdit2;
         private DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit repositoryItemButtonEdit1;
-        private DevExpress.XtraBars.BarEditItem analyticParam1;
+        private DevExpress.XtraBars.BarEditItem AnalyticParam1;
         private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit1;
         private DevExpress.XtraEditors.Repository.RepositoryItemCalcEdit repositoryItemCalcEdit1;
-        private DevExpress.XtraBars.BarEditItem analyticParam3;
+        private DevExpress.XtraBars.BarEditItem AnalyticParam3;
         private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit2;
     }
 }
