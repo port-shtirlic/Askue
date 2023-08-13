@@ -12,17 +12,35 @@
 
         public string GeneralScript { get; set; }
 
-        public string Analytic1 { get; set; }
+        /// <summary>
+        /// потребление ХВС<ГВС более чем на ХХХ значение
+        /// </summary>
+        public string AnalyticHvsLessGvs { get; set; }
 
-        public string Analytic2 { get; set; }
+        /// <summary>
+        /// отсутствие потребления ЭЭ при наличии потребления ХВС/ГВС и наоборот
+        /// </summary>
+        public string AnalyticNoEe { get; set; }
 
-        public string Analytic3 { get; set; }
+        /// <summary>
+        /// отсутствие данных по объекту учета в течении определенного периода времени;
+        /// </summary>
+        public string AnalyticNoMeasures { get; set; }
 
-        public string Analytic4 { get; set; }
+        /// <summary>
+        /// отсутствие потребления ХВС, при наличии ГВС
+        /// </summary>
+        public string AnalyticNoHvs { get; set; }
 
-        public string Analytic5 { get; set; }
+        /// <summary>
+        /// аномальный расход с возможностью выставления верхнего и нижнего уровня диапазона.
+        /// </summary>
+        public string AnalyticAbnormal { get; set; }
 
-        public string Analytic6 { get; set; }
+        /// <summary>
+        /// Отрицательная разница ХВС/ГВС
+        /// </summary>
+        public string AnalyticNegative { get; set; }
 
     }
 }

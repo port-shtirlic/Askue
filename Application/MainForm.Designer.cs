@@ -54,8 +54,10 @@
             this.analyticRadioGroup = new DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup();
             this.AnalyticParam1 = new DevExpress.XtraBars.BarEditItem();
             this.repositoryItemTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
-            this.AnalyticParam3 = new DevExpress.XtraBars.BarEditItem();
-            this.repositoryItemTextEdit2 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            this.AnalyticParam5min = new DevExpress.XtraBars.BarEditItem();
+            this.repositoryItemTextEdit3 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            this.AnalyticParam5max = new DevExpress.XtraBars.BarEditItem();
+            this.repositoryItemTextEdit4 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroupMain = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupBtnLoad = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
@@ -64,10 +66,12 @@
             this.ribbonPageGroupResources1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroupResources2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.analyticParams = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.AnalyticGroupType = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.AnalyticGroupParams1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.AnalyticGroupParams2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.repositoryItemButtonEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit();
             this.repositoryItemCalcEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCalcEdit();
+            this.repositoryItemTextEdit2 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
             this.measureUnitTree = new DevExpress.XtraTreeList.TreeList();
             this.treeListColumn1 = new DevExpress.XtraTreeList.Columns.TreeListColumn();
             this.gridControl = new DevExpress.XtraGrid.GridControl();
@@ -92,9 +96,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRadioGroup1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.analyticRadioGroup)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemButtonEdit1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCalcEdit1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.measureUnitTree)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
@@ -122,9 +128,10 @@
             this.MeasureType,
             this.AnalyticType,
             this.AnalyticParam1,
-            this.AnalyticParam3});
+            this.AnalyticParam5min,
+            this.AnalyticParam5max});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
-            this.ribbonControl1.MaxItemId = 41;
+            this.ribbonControl1.MaxItemId = 45;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1});
@@ -142,13 +149,15 @@
             this.repositoryItemButtonEdit1,
             this.repositoryItemCalcEdit1,
             this.repositoryItemTextEdit1,
-            this.repositoryItemTextEdit2});
+            this.repositoryItemTextEdit2,
+            this.repositoryItemTextEdit3,
+            this.repositoryItemTextEdit4});
             this.ribbonControl1.ShowApplicationButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowDisplayOptionsMenuButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowMoreCommandsButton = DevExpress.Utils.DefaultBoolean.False;
             this.ribbonControl1.ShowToolbarCustomizeItem = false;
-            this.ribbonControl1.Size = new System.Drawing.Size(1708, 158);
+            this.ribbonControl1.Size = new System.Drawing.Size(1882, 158);
             this.ribbonControl1.Toolbar.ShowCustomizeItem = false;
             // 
             // ComboBoxServerSelect
@@ -305,6 +314,7 @@
             this.MeasureType.EditHeight = 50;
             this.MeasureType.EditValue = true;
             this.MeasureType.EditWidth = 100;
+            this.MeasureType.Enabled = false;
             this.MeasureType.Id = 35;
             this.MeasureType.Name = "MeasureType";
             this.MeasureType.EditValueChanged += new System.EventHandler(this.MeasureType_EditValueChanged);
@@ -330,12 +340,6 @@
             // 
             // analyticRadioGroup
             // 
-            this.analyticRadioGroup.Items.AddRange(new DevExpress.XtraEditors.Controls.RadioGroupItem[] {
-            new DevExpress.XtraEditors.Controls.RadioGroupItem(1, "потребление ХВС<ГВС"),
-            new DevExpress.XtraEditors.Controls.RadioGroupItem(2, "отсутствие потребления ЭЭ"),
-            new DevExpress.XtraEditors.Controls.RadioGroupItem(3, "отсутствие данных по объекту"),
-            new DevExpress.XtraEditors.Controls.RadioGroupItem(4, "отсутствие ХВС, при наличии ГВС"),
-            new DevExpress.XtraEditors.Controls.RadioGroupItem(5, "аномальный расход")});
             this.analyticRadioGroup.Name = "analyticRadioGroup";
             // 
             // AnalyticParam1
@@ -344,6 +348,7 @@
             this.AnalyticParam1.Edit = this.repositoryItemTextEdit1;
             this.AnalyticParam1.Id = 39;
             this.AnalyticParam1.Name = "AnalyticParam1";
+            this.AnalyticParam1.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
             // 
             // repositoryItemTextEdit1
             // 
@@ -352,18 +357,33 @@
             this.repositoryItemTextEdit1.EditFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
             this.repositoryItemTextEdit1.Name = "repositoryItemTextEdit1";
             // 
-            // AnalyticParam3
+            // AnalyticParam5min
             // 
-            this.AnalyticParam3.Caption = "сколько дней отсутствует";
-            this.AnalyticParam3.Edit = this.repositoryItemTextEdit2;
-            this.AnalyticParam3.Id = 40;
-            this.AnalyticParam3.Name = "AnalyticParam3";
-            this.AnalyticParam3.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+            this.AnalyticParam5min.Caption = "аномальный расход мин";
+            this.AnalyticParam5min.Edit = this.repositoryItemTextEdit3;
+            this.AnalyticParam5min.Id = 43;
+            this.AnalyticParam5min.Name = "AnalyticParam5min";
+            this.AnalyticParam5min.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
             // 
-            // repositoryItemTextEdit2
+            // repositoryItemTextEdit3
             // 
-            this.repositoryItemTextEdit2.AutoHeight = false;
-            this.repositoryItemTextEdit2.Name = "repositoryItemTextEdit2";
+            this.repositoryItemTextEdit3.AutoHeight = false;
+            this.repositoryItemTextEdit3.EditFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+            this.repositoryItemTextEdit3.Name = "repositoryItemTextEdit3";
+            // 
+            // AnalyticParam5max
+            // 
+            this.AnalyticParam5max.Caption = "аномальный расход макс";
+            this.AnalyticParam5max.Edit = this.repositoryItemTextEdit4;
+            this.AnalyticParam5max.Id = 44;
+            this.AnalyticParam5max.Name = "AnalyticParam5max";
+            this.AnalyticParam5max.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+            // 
+            // repositoryItemTextEdit4
+            // 
+            this.repositoryItemTextEdit4.AutoHeight = false;
+            this.repositoryItemTextEdit4.EditFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+            this.repositoryItemTextEdit4.Name = "repositoryItemTextEdit4";
             // 
             // ribbonPage1
             // 
@@ -375,8 +395,9 @@
             this.ribbonPageGroupResources1,
             this.ribbonPageGroupResources2,
             this.ribbonPageGroup1,
-            this.ribbonPageGroup2,
-            this.analyticParams});
+            this.AnalyticGroupType,
+            this.AnalyticGroupParams1,
+            this.AnalyticGroupParams2});
             this.ribbonPage1.Name = "ribbonPage1";
             this.ribbonPage1.Text = "Загрузка";
             // 
@@ -419,19 +440,25 @@
             this.ribbonPageGroup1.ItemLinks.Add(this.MeasureType);
             this.ribbonPageGroup1.Name = "ribbonPageGroup1";
             // 
-            // ribbonPageGroup2
+            // AnalyticGroupType
             // 
-            this.ribbonPageGroup2.ItemLinks.Add(this.AnalyticType);
-            this.ribbonPageGroup2.Name = "ribbonPageGroup2";
-            this.ribbonPageGroup2.Text = "Тип аналитики";
+            this.AnalyticGroupType.ItemLinks.Add(this.AnalyticType);
+            this.AnalyticGroupType.Name = "AnalyticGroupType";
+            this.AnalyticGroupType.Text = "Тип аналитики";
+            this.AnalyticGroupType.Visible = false;
             // 
-            // analyticParams
+            // AnalyticGroupParams1
             // 
-            this.analyticParams.ItemLinks.Add(this.AnalyticParam1);
-            this.analyticParams.ItemLinks.Add(this.AnalyticParam3);
-            this.analyticParams.Name = "analyticParams";
-            this.analyticParams.Text = "Параметры";
-            this.analyticParams.Visible = false;
+            this.AnalyticGroupParams1.ItemLinks.Add(this.AnalyticParam1);
+            this.AnalyticGroupParams1.Name = "AnalyticGroupParams1";
+            this.AnalyticGroupParams1.Visible = false;
+            // 
+            // AnalyticGroupParams2
+            // 
+            this.AnalyticGroupParams2.ItemLinks.Add(this.AnalyticParam5min);
+            this.AnalyticGroupParams2.ItemLinks.Add(this.AnalyticParam5max);
+            this.AnalyticGroupParams2.Name = "AnalyticGroupParams2";
+            this.AnalyticGroupParams2.Visible = false;
             // 
             // repositoryItemButtonEdit1
             // 
@@ -446,6 +473,11 @@
             this.repositoryItemCalcEdit1.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.repositoryItemCalcEdit1.Name = "repositoryItemCalcEdit1";
+            // 
+            // repositoryItemTextEdit2
+            // 
+            this.repositoryItemTextEdit2.AutoHeight = false;
+            this.repositoryItemTextEdit2.Name = "repositoryItemTextEdit2";
             // 
             // measureUnitTree
             // 
@@ -474,7 +506,7 @@
             this.gridControl.Location = new System.Drawing.Point(348, 158);
             this.gridControl.MainView = this.gridView;
             this.gridControl.Name = "gridControl";
-            this.gridControl.Size = new System.Drawing.Size(1360, 690);
+            this.gridControl.Size = new System.Drawing.Size(1534, 690);
             this.gridControl.TabIndex = 2;
             this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView});
@@ -523,7 +555,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1708, 848);
+            this.ClientSize = new System.Drawing.Size(1882, 848);
             this.Controls.Add(this.gridControl);
             this.Controls.Add(this.measureUnitTree);
             this.Controls.Add(this.ribbonControl1);
@@ -545,9 +577,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRadioGroup1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.analyticRadioGroup)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemButtonEdit1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCalcEdit1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.measureUnitTree)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView)).EndInit();
@@ -600,15 +634,19 @@
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
         private DevExpress.XtraBars.BarEditItem AnalyticType;
         private DevExpress.XtraEditors.Repository.RepositoryItemRadioGroup analyticRadioGroup;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup analyticParams;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup AnalyticGroupType;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup AnalyticGroupParams1;
         private DevExpress.XtraEditors.Repository.RepositoryItemTimeEdit repositoryItemTimeEdit2;
         private DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit repositoryItemButtonEdit1;
         private DevExpress.XtraBars.BarEditItem AnalyticParam1;
         private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit1;
         private DevExpress.XtraEditors.Repository.RepositoryItemCalcEdit repositoryItemCalcEdit1;
-        private DevExpress.XtraBars.BarEditItem AnalyticParam3;
         private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit2;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup AnalyticGroupParams2;
+        private DevExpress.XtraBars.BarEditItem AnalyticParam5min;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit3;
+        private DevExpress.XtraBars.BarEditItem AnalyticParam5max;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit4;
     }
 }
 

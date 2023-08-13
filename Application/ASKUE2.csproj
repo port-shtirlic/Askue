@@ -141,13 +141,25 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\energy_analytic_water_negative.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\energy_test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\energy_analytic_abnormal.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\energy_analytic_no_HVS.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\energy_general.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\energy_analytic_2.sql">
+    <Content Include="Scripts\energy_analytic_no_EE.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\energy_analytic_1.sql">
+    <Content Include="Scripts\energy_analytic_HVS_less_GVS.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\energy_tree.sql">

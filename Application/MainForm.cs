@@ -91,6 +91,9 @@ namespace Application
             }
             _selectedOptions = option;
 
+            MeasureType.Enabled = true;
+
+            #region загрузка дерева ПУ
             //Проверка доступа к БД
             try
             {
@@ -136,6 +139,71 @@ namespace Application
             measureUnitTree.ParentFieldName = "MasterID";
 
             this.labelConnectionStatus.EditValue = messageString;
+
+            #endregion
+
+            #region Типы аналитики
+            analyticRadioGroup.Items.Clear();
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticHvsLessGvs))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticHvsLessGvs,
+                    Enabled = true,
+                    Description = "потребленеие ХВС<ГВС"
+                });
+            }
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticNoHvs))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticNoHvs,
+                    Enabled = true,
+                    Description = "отсутствие ХВС, при наличии ГВС"
+                });
+            }
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticNegative))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticNegative,
+                    Enabled = true,
+                    Description = "отрицательная разница ХВС/ГВС"
+                });
+            }
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticNoEe))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticNoEe,
+                    Enabled = true,
+                    Description = "отсутствие потребленеие ЭЭ"
+                });
+            }
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticNoMeasures))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticNoMeasures,
+                    Enabled = true,
+                    Description = "отсутствие данных по объекту"
+                });
+            }
+            if (!string.IsNullOrEmpty(_selectedOptions.AnalyticAbnormal))
+            {
+                analyticRadioGroup.Items.Add(new DevExpress.XtraEditors.Controls.RadioGroupItem
+                {
+                    Value = OptionScriptType.AnalyticAbnormal,
+                    Enabled = true,
+                    Description = "аномальный расход"
+                });
+            }
+
+            if (analyticRadioGroup.Items.Any())
+                AnalyticGroupType.Visible = true;
+            else
+                AnalyticGroupType.Visible = false;
+            #endregion
         }
 
         /// <summary>
@@ -145,11 +213,6 @@ namespace Application
         /// <param name="e"></param>
         private async void BtnLoad_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var generalScript = _selectedOptions.GeneralScript;
-            var a = "asd {general}".Replace("{general}", $"/r/n{generalScript}");
-
-
-
             var selectedDeviceIds = measureUnitTree
                 .GetAllCheckedNodes()
                 .Select(x => x.GetValue("Device_id").ToString());
@@ -159,9 +222,9 @@ namespace Application
             SetDefaultData();
 
             var isMeasure = MeasureType.EditValue as bool?;
-            var analyticTypeValue = AnalyticType.EditValue as int?;
+            var analyticTypeValue = AnalyticType.EditValue as OptionScriptType?;
 
-            if (!isMeasure.HasValue || !analyticTypeValue.HasValue)
+            if (!isMeasure.HasValue)
                 return;
 
             OptionScriptType? scriptType = null;
@@ -169,27 +232,13 @@ namespace Application
                 scriptType = OptionScriptType.Main;
             else
             {
-                switch(analyticTypeValue.Value)
+                if (!analyticTypeValue.HasValue)
                 {
-                    case 1:
-                        scriptType = OptionScriptType.Analytic1;
-                        break;
-                    case 2:
-                        scriptType = OptionScriptType.Analytic2;
-                        break;
-                    case 3:
-                        scriptType = OptionScriptType.Analytic3;
-                        break;
-                    case 4:
-                        scriptType = OptionScriptType.Analytic4;
-                        break;
-                    case 5:
-                        scriptType = OptionScriptType.Analytic5;
-                        break;
-                    case 6:
-                        scriptType = OptionScriptType.Analytic6;
-                        break;
+                    this.labelConnectionStatus.EditValue = "Включен режим аналитики, но не выбран тип";
+                    return;
                 }
+                scriptType = analyticTypeValue;
+
             }
             if (scriptType == null)
             {
@@ -203,9 +252,6 @@ namespace Application
             {
                 string sqlGeneralExpression = await GetSqlExpressionFromFile(OptionScriptType.GeneralScript);
                 sqlExpression = sqlExpression.Replace("--{GENERAL}", sqlGeneralExpression);
-                //var generalScript = _selectedOptions.GeneralScript;
-                //sqlExpression = string.Format(sqlExpression, generalScript);
-
             }
             
             var dateBegin = ((DateTime)DateBegin.EditValue).ToString("yyyyMMdd");
@@ -224,7 +270,7 @@ namespace Application
             }
             else
             {
-                if (analyticTypeValue.Value == 1)
+                if (analyticTypeValue.Value == OptionScriptType.AnalyticHvsLessGvs)
                 {
                     var paramString = AnalyticParam1.EditValue as string;
                     if (string.IsNullOrEmpty(paramString) || !Decimal.TryParse(paramString, out decimal paramValue))
@@ -234,16 +280,48 @@ namespace Application
                     }
                     sqlExpression = string.Format(sqlExpression,
                         selectedDeviceIdsInSqlForJoinMainScript,
-                        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @delta = {paramValue}"
+                        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @delta = {paramValue}"                   );
+                }
+                else if (analyticTypeValue.Value == OptionScriptType.AnalyticAbnormal)
+                {
+                    var paramMinString = AnalyticParam5min.EditValue as string;
+                    var paramMaxString = AnalyticParam5max.EditValue as string;
+                    if (string.IsNullOrEmpty(paramMinString) ||
+                        string.IsNullOrEmpty(paramMaxString) ||
+                        !Decimal.TryParse(paramMinString, out decimal paramMinValue) ||
+                        !Decimal.TryParse(paramMaxString, out decimal paramMaxValue)
+                    )
+                    {
+                        this.labelConnectionStatus.EditValue = "Не заполнен параметр";
+                        return;
+                    }
+                    sqlExpression = string.Format(sqlExpression,
+                        selectedDeviceIdsInSqlForJoinMainScript,
+                        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}' set @max = {paramMaxValue} set @min = {paramMinValue}"
                     );
                 }
-                else if (analyticTypeValue.Value == 2)
+                else
                 {
                     sqlExpression = string.Format(sqlExpression,
                         selectedDeviceIdsInSqlForJoinMainScript,
                         $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}'"
                     );
                 }
+                //else if (analyticTypeValue.Value == 2)
+                //{
+                //    sqlExpression = string.Format(sqlExpression,
+                //        selectedDeviceIdsInSqlForJoinMainScript,
+                //        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}'"
+                //    );
+                //}
+                //else if (analyticTypeValue.Value == 4)
+                //{
+                //    sqlExpression = string.Format(sqlExpression,
+                //        selectedDeviceIdsInSqlForJoinMainScript,
+                //        $"\r\nset @beginDate = '{dateBegin}' set @endDate = '{dateEnd}'"
+                //    );
+                //}
+
             } 
 
             gridView.ShowLoadingPanel();
@@ -297,7 +375,7 @@ namespace Application
                 node.CheckState = OneOfChildsIsChecked(node) ? CheckState.Indeterminate : CheckState.Unchecked;
             }
 
-            BtnLoad.Enabled = measureUnitTree.GetAllCheckedNodes().Any();
+            SetBtnEnabled();
         }
 
         /// <summary>
@@ -313,7 +391,8 @@ namespace Application
             if (isMeasure.Value)
             {
                 AnalyticType.Enabled = false;
-                analyticParams.Visible = false;
+                AnalyticGroupParams1.Visible = false;
+                AnalyticGroupParams2.Visible = false;
 
                 hasGvs.Enabled = true;
                 hasHvs.Enabled = true;
@@ -321,23 +400,26 @@ namespace Application
                 hasEe.Enabled = true;
 
                 /*
-                А) потребление ХВС<ГВС более чем на ХХХ значение; (на сколько)
-                Б) отсутствие потребления ЭЭ при наличии потребления ХВС/ГВС и наоборот; -
-                В) отсутствие данных по объекту учета в течении определенного периода времени; (дни)
-                Г) отсутствие потребления ХВС, при наличии ГВС;-
-                Д) аномальный расход с возможностью выставления верхнего и нижнего уровня диапазона.
+                +А) потребление ХВС<ГВС более чем на ХХХ значение; (на сколько)
+                +-Б) отсутствие потребления ЭЭ при наличии потребления ХВС/ГВС и наоборот;
+                -В) отсутствие данных по объекту учета в течении определенного периода времени;
+                +Г) отсутствие потребления ХВС, при наличии ГВС;
+                +-Д) аномальный расход с возможностью выставления верхнего и нижнего уровня диапазона.
+                +E) отрицательная разница ХВС/ГВС
                 */
             }
             else
             {
                 AnalyticType.Enabled = true;
-                analyticParams.Visible = true;
 
+                AnalyticGroupParams1.Visible = true;
+                AnalyticGroupParams2.Visible = true;
                 hasGvs.Enabled = false;
                 hasHvs.Enabled = false;
                 hasTe.Enabled = false;
-                hasEe.Enabled = false;
+                hasEe.Enabled = false;                
             }
+            SetBtnEnabled();
         }
 
         /// <summary>
@@ -347,25 +429,29 @@ namespace Application
         /// <param name="e"></param>
         private void AnalyticType_EditValueChanged(object sender, EventArgs e)
         {
-            var typeValue = AnalyticType.EditValue as int?;
-
+            var typeValue = AnalyticType.EditValue as OptionScriptType?;
             if (!typeValue.HasValue)
                 return;
 
-            if (typeValue.Value == 1)
+            SetBtnEnabled();
+
+            if (typeValue.Value == OptionScriptType.AnalyticHvsLessGvs)
             {
                 AnalyticParam1.Visibility = BarItemVisibility.Always;
-                AnalyticParam3.Visibility = BarItemVisibility.Never;
+                AnalyticParam5min.Visibility = BarItemVisibility.Never;
+                AnalyticParam5max.Visibility = BarItemVisibility.Never;
             }
-            else if (typeValue.Value == 3)
+            else if (typeValue.Value == OptionScriptType.AnalyticAbnormal)
             {
                 AnalyticParam1.Visibility = BarItemVisibility.Never;
-                AnalyticParam3.Visibility = BarItemVisibility.Always;
-            } 
+                AnalyticParam5min.Visibility = BarItemVisibility.Always;
+                AnalyticParam5max.Visibility = BarItemVisibility.Always;
+            }
             else
             {
                 AnalyticParam1.Visibility = BarItemVisibility.Never;
-                AnalyticParam3.Visibility = BarItemVisibility.Never;
+                AnalyticParam5min.Visibility = BarItemVisibility.Never;
+                AnalyticParam5max.Visibility = BarItemVisibility.Never;
             }
         }
     }

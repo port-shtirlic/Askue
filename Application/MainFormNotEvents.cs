@@ -112,23 +112,23 @@ namespace Application
                 case OptionScriptType.Tree:
                     scriptName = _selectedOptions.Tree;
                     break;
-                case OptionScriptType.Analytic1:
-                    scriptName = _selectedOptions.Analytic1;
+                case OptionScriptType.AnalyticHvsLessGvs:
+                    scriptName = _selectedOptions.AnalyticHvsLessGvs;
                     break;
-                case OptionScriptType.Analytic2:
-                    scriptName = _selectedOptions.Analytic2;
+                case OptionScriptType.AnalyticNoEe:
+                    scriptName = _selectedOptions.AnalyticNoEe;
                     break;
-                case OptionScriptType.Analytic3:
-                    scriptName = _selectedOptions.Analytic3;
+                case OptionScriptType.AnalyticNoMeasures:
+                    scriptName = _selectedOptions.AnalyticNoMeasures;
                     break;
-                case OptionScriptType.Analytic4:
-                    scriptName = _selectedOptions.Analytic4;
+                case OptionScriptType.AnalyticNoHvs:
+                    scriptName = _selectedOptions.AnalyticNoHvs;
                     break;
-                case OptionScriptType.Analytic5:
-                    scriptName = _selectedOptions.Analytic5;
+                case OptionScriptType.AnalyticAbnormal:
+                    scriptName = _selectedOptions.AnalyticAbnormal;
                     break;
-                case OptionScriptType.Analytic6:
-                    scriptName = _selectedOptions.Analytic6;
+                case OptionScriptType.AnalyticNegative:
+                    scriptName = _selectedOptions.AnalyticNegative;
                     break;
                 case OptionScriptType.GeneralScript:
                     scriptName = _selectedOptions.GeneralScript;
@@ -155,6 +155,26 @@ namespace Application
                 }
             }
             return sqlExpression;
+        }
+
+        private void SetBtnEnabled()
+        {
+            if (!measureUnitTree.GetAllCheckedNodes().Any())
+            {
+                BtnLoad.Enabled = false;
+                return;
+            }
+
+            var isMeasure = MeasureType.EditValue as bool?;
+            if (isMeasure == null || !isMeasure.Value)
+            {
+                if (AnalyticType.EditValue == null || !(AnalyticType.EditValue is OptionScriptType))
+                {
+                    BtnLoad.Enabled = false;
+                    return;
+                }
+            }
+            BtnLoad.Enabled = true;
         }
     }
 }
